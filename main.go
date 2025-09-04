@@ -7,14 +7,20 @@ import (
 	"github.com/HAGG-glitch/student_managment_system/models"
 	"github.com/HAGG-glitch/student_managment_system/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	// Connect to DB
-	db, err, _ := config.ConnectDB()
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
+	if err := godotenv.Load(); err != nil {
+        log.Println("No .env file found, using system environment variables")
+    }
+
+    db, err, _ := config.ConnectDB()
+    if err != nil {
+        log.Fatal("Failed to connect to database:", err)
+    }
+
 
 // Independent tables
 err = db.AutoMigrate(
