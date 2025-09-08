@@ -17,6 +17,12 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		if !strings.HasPrefix(authHeader, "Bearer ") {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Authorization header format"})
+			c.Abort()
+			return
+		}
+
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		claims, err := utils.ValidateJWT(token)
 		if err != nil {
@@ -26,6 +32,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("user_id", claims.UserID)
+		c.Set("role", claims.Role)
 		c.Next()
 	}
 }

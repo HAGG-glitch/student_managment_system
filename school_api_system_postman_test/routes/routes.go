@@ -46,7 +46,9 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB){
 		// User routes
 		api.POST("/register", func(c *gin.Context) { controllers.RegisterUser(c, db) })
 		api.POST("/login", func(c *gin.Context) { controllers.LoginUser(c, db) })
-
+		// api.GET("/student-dashboard", middleware.AuthMiddleware(), security.RoleMiddleware("student", "teacher"), controllers.StudentDashboard)
+		// api.GET("/teacher-dashboard", middleware.AuthMiddleware(), rbca.RoleMiddleware("teacher", "admin"), controllers.TeacherDashboard)
+		// api.GET("/admin-dashboard", middleware.AuthMiddleware(), rbca.RoleMiddleware("admin"), controllers.AdminDashboard)
 		api.GET("/profile", middleware.AuthMiddleware(), func(c *gin.Context) {controllers.GetProfile(c, db)})
 
 		//attendance routes

@@ -19,7 +19,11 @@ func RegisterUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil{
+		 c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
+    return
+	}
 	user := models.User{Email: input.Email, Password: string(hashedPassword)}
 	db.Create(&user)
 
@@ -47,7 +51,7 @@ func LoginUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	token, _ := utils.GenerateJWT(user.ID)
+	token, _ := utils.GenerateJWT(user.ID, user.Role)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 

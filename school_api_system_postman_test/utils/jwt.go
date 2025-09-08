@@ -7,19 +7,27 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var jwtKey = func() []byte {
+    key := os.Getenv("JWT_SECRET")
+    if key == "" {
+        panic("JWT_SECRET not set in environment variables")
+    }
+    return []byte(key)
+}()
 
-var jwtKey = []byte(os.Getenv("JWT_SECRET")) // Set in your .env
 
 type Claims struct {
 	UserID uint `json:"user_id"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 // GenerateJWT creates a token
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(userID uint, role string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		UserID: userID,
+		Role:   role, // You can customize roles as needed
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
