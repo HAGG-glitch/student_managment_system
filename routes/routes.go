@@ -54,19 +54,19 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB){
 		api.GET("/attendance/student/:student_id", func(c *gin.Context) {controllers.GetAttendanceByStudent(c, db)})
 		api.GET("/attendance/class/:class_id", func(c *gin.Context) {controllers.GetAttendanceByClass(c, db)})
 		
-		// Exam routes
-		// api.POST("/exams", func(c *gin.Context) {controllers.CreateExam(c, db)})
-		// api.GET("/exams", func(c *gin.Context) {controllers.GetExams(c, db)})
-		// api.GET("/exams/:id", func(c *gin.Context) {controllers.GetExamByID(c, db)})
-		// api.PUT("/exams/:id", func(c *gin.Context) {controllers.UpdateExam(c, db)})
-		// api.DELETE("/exams/:id", func(c *gin.Context) {controllers.DeleteExam(c, db)})
+		//Exam routes
+		api.POST("/exams", func(c *gin.Context) {controllers.CreateExam(c, db)})
+		api.GET("/exams", func(c *gin.Context) {controllers.GetExams(c, db)})
+		api.GET("/exams/:id", func(c *gin.Context) {controllers.GetExamByID(c, db)})
+		api.PUT("/exams/:id", func(c *gin.Context) {controllers.UpdateExam(c, db)})
+		api.DELETE("/exams/:id", func(c *gin.Context) {controllers.DeleteExam(c, db)})
 
-		// // Enrollment routes
-		// api.POST("/enrollments", func(c *gin.Context) {controllers.CreateEnrollment(c, db)})
-		// api.GET("/enrollments", func(c *gin.Context) {controllers.GetEnrollments(c, db)})
-		// api.GET("/enrollments/:id", func(c *gin.Context) {controllers.GetEnrollmentByID(c, db)})
-		// api.PUT("/enrollments/:id", func(c *gin.Context) {controllers.UpdateEnrollment(c, db)})
-		// api.DELETE("/enrollments/:id", func(c *gin.Context) {controllers.DeleteEnrollment(c, db)})
+		// Enrollment routes
+		api.POST("/enrollments", func(c *gin.Context) {controllers.CreateEnrollment(c, db)})
+		api.GET("/enrollments", func(c *gin.Context) {controllers.GetEnrollments(c, db)})
+		api.GET("/enrollments/:id", func(c *gin.Context) {controllers.GetEnrollmentByID(c, db)})
+		api.PUT("/enrollments/:id", func(c *gin.Context) {controllers.UpdateEnrollment(c, db)})
+		api.DELETE("/enrollments/:id", func(c *gin.Context) {controllers.DeleteEnrollment(c, db)})
 
 
 	}
