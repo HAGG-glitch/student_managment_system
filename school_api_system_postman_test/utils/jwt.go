@@ -1,27 +1,19 @@
 package utils
 
 import (
-	"log"
 	"os"
 	"time"
-
-	"github.com/joho/godotenv"
-
+	
 	"github.com/golang-jwt/jwt/v5"
 )
 
 var jwtKey = func() []byte {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found, reading system environment variables")
-	}
-
 	key := os.Getenv("JWT_SECRET")
 	if key == "" {
 		panic("JWT_SECRET not set in environment variables")
 	}
 	return []byte(key)
-}()
+}
 
 // GenerateJWT creates a token
 func GenerateJWT(userID uint, role string) (string, error) {
@@ -36,7 +28,7 @@ func GenerateJWT(userID uint, role string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	return token.SignedString(jwtKey())
 }
 
 type Claims struct {
@@ -49,7 +41,7 @@ type Claims struct {
 func ValidateJWT(tokenStr string) (*Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return jwtKey(), nil
 	})
 
 	if err != nil || !token.Valid {

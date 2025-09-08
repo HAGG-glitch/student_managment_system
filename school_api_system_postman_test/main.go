@@ -7,9 +7,17 @@ import (
 	"github.com/HAGG-glitch/student_managment_system/models"
 	"github.com/HAGG-glitch/student_managment_system/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+}
+
 func main() {
+
 	db, err, _ := config.ConnectDB()
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
