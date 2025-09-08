@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	db, err, _ := config.ConnectDB()
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)

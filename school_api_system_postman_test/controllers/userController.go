@@ -13,6 +13,7 @@ func RegisterUser(c *gin.Context, db *gorm.DB) {
 	var input struct {
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
+		Role     string `json:"role" binding:"required,oneof=admin teacher student"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -24,7 +25,7 @@ func RegisterUser(c *gin.Context, db *gorm.DB) {
 		 c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
     return
 	}
-	user := models.User{Email: input.Email, Password: string(hashedPassword)}
+	user := models.User{Email: input.Email, Password: string(hashedPassword), Role: input.Role}
 	db.Create(&user)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
@@ -51,14 +52,29 @@ func LoginUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	token, _ := utils.GenerateJWT(user.ID, user.Role)
+	token, err := utils.GenerateJWT(user.ID, user.Role)
+	 if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		return
+	 }
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 func GetProfile(c *gin.Context, db *gorm.DB) {
-	userID, _ := c.Get("user_id")
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in context"})
+		return
+	}
+
 	var user models.User
-	if err := db.First(&user, userID).Error; err != nil {
+	id, ok := userID.(uint)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID type"})
+		return
+	}
+
+	if err := db.First(&user, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
