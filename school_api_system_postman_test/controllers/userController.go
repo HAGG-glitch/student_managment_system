@@ -11,6 +11,7 @@ import (
 
 func RegisterUser(c *gin.Context, db *gorm.DB) {
 	var input struct {
+		Username string `json:"username" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 		Role     string `json:"role" binding:"required,oneof=admin teacher student"`
@@ -25,7 +26,7 @@ func RegisterUser(c *gin.Context, db *gorm.DB) {
 		 c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
     return
 	}
-	user := models.User{Email: input.Email, Password: string(hashedPassword), Role: input.Role}
+	user := models.User{Username: input.Username ,Email: input.Email, Password: string(hashedPassword), Role: input.Role}
 	db.Create(&user)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
@@ -36,6 +37,12 @@ func LoginUser(c *gin.Context, db *gorm.DB) {
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 	}
+
+	if input.Email == "" ||  input.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email and password are required"})
+		return
+	}
+
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -62,7 +62,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB){
 		// =========================
 		// Dashboard routes
 		// =========================
-		api.GET("/student-dashboard", middleware.AuthMiddleware(), sec.RoleMiddleware(), controllers.StudentDashboard)
+		api.GET("/student-dashboard", middleware.AuthMiddleware(), sec.RoleMiddleware("student", "teacher", "admin"), controllers.StudentDashboard)
 		api.GET("/teacher-dashboard", middleware.AuthMiddleware(), sec.RoleMiddleware("teacher", "admin"), controllers.TeacherDashboard)
 		api.GET("/admin-dashboard", middleware.AuthMiddleware(), sec.RoleMiddleware("admin"), controllers.AdminDashboard)
 
